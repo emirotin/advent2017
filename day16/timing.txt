@@ -1,0 +1,9 @@
+100 iterations, measured as time (repeat 100 node index1.js)
+
+
+index1    7.64s
+index1.1  7.91s
+index1.2  6.81s
+index1.3  6.85s
+index1.4  6.73s
+index1.5  6.71s

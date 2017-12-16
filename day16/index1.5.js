@@ -53,36 +53,24 @@ for (let { command, payload } of input) {
 const hash = {};
 arr.forEach((el, i) => (hash[el] = i));
 
-const run = () => {
-  for (const { command, x, y } of nonSpins) {
-    if (command === "x") {
-      const t1 = arr[x];
-      const t2 = arr[y];
-      arr[x] = t2;
-      arr[y] = t1;
-      hash[t2] = x;
-      hash[t1] = y;
-    } else {
-      const t1 = hash[x];
-      const t2 = hash[y];
-      hash[x] = t2;
-      hash[y] = t1;
-      arr[t2] = x;
-      arr[t1] = y;
-    }
+for (const { command, x, y } of nonSpins) {
+  if (command === "x") {
+    const t1 = arr[x];
+    const t2 = arr[y];
+    arr[x] = t2;
+    arr[y] = t1;
+    hash[t2] = x;
+    hash[t1] = y;
+  } else {
+    const t1 = hash[x];
+    const t2 = hash[y];
+    hash[x] = t2;
+    hash[y] = t1;
+    arr[t2] = x;
+    arr[t1] = y;
   }
-};
-
-const ITER = 1e9;
-const PERIOD = 112;
-
-const iter = ITER % PERIOD;
-for (let i = 0; i < iter; i++) {
-  run();
 }
 
-shift = (shift * ITER) % L;
-
-arr = arr.slice(L - shift).concat(arr.slice(0, L - shift));
+arr = arr.slice(arr.length - shift).concat(arr.slice(0, arr.length - shift));
 
 console.log(arr.join(""));

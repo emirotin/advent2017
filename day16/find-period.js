@@ -73,16 +73,13 @@ const run = () => {
   }
 };
 
-const ITER = 1e9;
-const PERIOD = 112;
-
-const iter = ITER % PERIOD;
-for (let i = 0; i < iter; i++) {
+let i = 0;
+let orig = arr.join("");
+while (true) {
+  i++;
   run();
+  if (arr.join("") === orig) {
+    console.log("period", i);
+    break;
+  }
 }
-
-shift = (shift * ITER) % L;
-
-arr = arr.slice(L - shift).concat(arr.slice(0, L - shift));
-
-console.log(arr.join(""));
