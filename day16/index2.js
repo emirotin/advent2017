@@ -20,69 +20,55 @@ const parse = s => {
 };
 
 const a = "a".charCodeAt(0);
-const L = 16;
-let arr = Array.from({ length: L }, (_, i) => String.fromCharCode(i + a));
-let shift = 0;
+let arr = Array.from({ length: 16 }, (_, i) => String.fromCharCode(i + a));
 
 const input = readFile("./input")
   .split(",")
   .map(parse);
 
-const nonSpins = [];
-for (let { command, payload } of input) {
-  if (command === "s") {
-    shift = (shift + payload) % L;
-    continue;
-  }
+const spin = x => {
+  arr = arr.slice(arr.length - x).concat(arr.slice(0, arr.length - x));
+};
 
-  if (command === "x") {
-    nonSpins.push({
-      command,
-      x: (payload[0] - shift + L) % L,
-      y: (payload[1] - shift + L) % L
-    });
-  } else {
-    nonSpins.push({
-      command,
-      x: payload[0],
-      y: payload[1]
-    });
-  }
-}
-
-const hash = {};
-arr.forEach((el, i) => (hash[el] = i));
+const swap = (x, y) => {
+  const t = arr[x];
+  arr[x] = arr[y];
+  arr[y] = t;
+};
 
 const run = () => {
-  for (const { command, x, y } of nonSpins) {
-    if (command === "x") {
-      const t1 = arr[x];
-      const t2 = arr[y];
-      arr[x] = t2;
-      arr[y] = t1;
-      hash[t2] = x;
-      hash[t1] = y;
-    } else {
-      const t1 = hash[x];
-      const t2 = hash[y];
-      hash[x] = t2;
-      hash[y] = t1;
-      arr[t2] = x;
-      arr[t1] = y;
+  for (const { command, payload } of input) {
+    switch (command) {
+      case "s":
+        spin(payload);
+        break;
+      case "x":
+        swap(...payload);
+        break;
+      case "p":
+        swap(...payload.map(p => arr.indexOf(p)));
+        break;
+
+      default:
+        throw new Error("WTF");
     }
   }
 };
 
-const ITER = 1e9;
-const PERIOD = 112;
+let period = 0;
+let orig = arr.join("");
+while (true) {
+  period++;
+  run();
+  if (arr.join("") === orig) {
+    break;
+  }
+}
 
-const iter = ITER % PERIOD;
+const ITER = 1e9;
+const iter = ITER % period;
 for (let i = 0; i < iter; i++) {
   run();
 }
-
-shift = (shift * ITER) % L;
-
-arr = arr.slice(L - shift).concat(arr.slice(0, L - shift));
 
 console.log(arr.join(""));
