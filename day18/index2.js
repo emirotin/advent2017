@@ -91,7 +91,7 @@ const System = () => {
   };
 
   return {
-    run: async () => {
+    run: () => {
       const ps = [
         Program(instructions, 0, {
           send: send(1),
@@ -103,7 +103,7 @@ const System = () => {
         })
       ];
 
-      Promise.all(ps.map(p => p.run()));
+      ps.forEach(p => p.run());
     }
   };
 };
