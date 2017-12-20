@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/emirotin/advent2017#readme",
   "dependencies": {
+    "decimal.js": "^9.0.1",
     "lodash": "^4.17.4"
   }
 }
