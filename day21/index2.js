@@ -70,7 +70,7 @@ const stringToGrid = s => s.split("/").map(l => l.split(""));
 const logGrid = g => console.log(g.map(r => r.join("")).join("\n"));
 
 let grid = stringToGrid(".#./..#/###");
-const ITER = 5;
+const ITER = 18;
 
 for (let i = 0; i < ITER; i++) {
   const size = grid.length;
