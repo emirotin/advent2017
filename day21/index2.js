@@ -1,11 +1,39 @@
 const { readLines } = require("../lib");
 const range = require("lodash/range");
 const flatten = require("lodash/flatten");
+const uniq = require("lodash/uniq");
+
+const gridToString = grid => grid.join("/");
+
+const stringToGrid = s => s.split("/");
+
+const logGrid = g => console.log(g.map(r => r.join("")).join("\n"));
+
+const gridVariations = g => {
+  g = g.split("/").map(l => l.split(""));
+  const c = g.length;
+
+  const fv = g.slice().reverse();
+  const fh = g.map(r => r.slice().reverse());
+  const rr = range(0, c).map(i => range(0, c).map(j => g[c - 1 - j][i]));
+  const rl = range(0, c).map(i => range(0, c).map(j => g[j][c - 1 - i]));
+  const d1 = range(0, c).map(i => range(0, c).map(j => g[j][i]));
+  const d2 = range(0, c).map(i =>
+    range(0, c).map(j => g[c - 1 - j][c - 1 - i])
+  );
+
+  return uniq(
+    [g, fv, fh, rl, rr, d1, d2].map(g => g.map(r => r.join("")).join("/"))
+  );
+};
 
 const rules = readLines("./input")
   .map(s => s.split(" => "))
   .reduce((acc, [l, r]) => {
-    acc[l] = r;
+    r = r.split("/");
+    for (const l_ of gridVariations(l)) {
+      acc[l_] = acc[l_] || r;
+    }
     return acc;
   }, {});
 
@@ -21,53 +49,27 @@ const gridToSubgrids = (grid, subgridSize) => {
   );
 };
 
-const concat = r => r.reduce((acc, r) => acc.concat(r), []);
+const concatStrings = r => r.reduce((acc, r) => acc + r, "");
+const concatArrays = r => r.reduce((acc, r) => acc.concat(r), []);
 
 const subgridsToGrid = ss => {
   const c = ss.length;
   const subgridSize = ss[0][0].length;
   const size = c * subgridSize;
-  return range(0, size).map(i =>
-    range(0, size).map(j => {
-      const x = Math.floor(i / subgridSize);
-      const ii = i % subgridSize;
-      const y = Math.floor(j / subgridSize);
-      const jj = j % subgridSize;
-      return ss[x][y][ii][jj];
-    })
+  return concatArrays(
+    ss.map(row =>
+      range(0, subgridSize).map(i => concatStrings(row.map(cell => cell[i])))
+    )
   );
-};
-
-const gridVariations = g => {
-  const c = g.length;
-
-  const fv = g.slice().reverse();
-  const fh = g.map(r => r.slice().reverse());
-  const rr = range(0, c).map(i => range(0, c).map(j => g[c - 1 - j][i]));
-  const rl = range(0, c).map(i => range(0, c).map(j => g[j][c - 1 - i]));
-  const d1 = range(0, c).map(i => range(0, c).map(j => g[j][i]));
-  const d2 = range(0, c).map(i =>
-    range(0, c).map(j => g[c - 1 - j][c - 1 - i])
-  );
-
-  return [g, fv, fh, rl, rr, d1, d2];
 };
 
 const mapSubgrid = g => {
-  const ggs = gridVariations(g).map(gridToString);
-  for (const gg of ggs) {
-    if (rules[gg]) {
-      return stringToGrid(rules[gg]);
-    }
+  const res = rules[gridToString(g)];
+  if (!res) {
+    throw new Error(`No rewrite rule for ${gridToString(g)}`);
   }
-  throw new Error(`No rewrite rule for ${gridToString(g)}`);
+  return res;
 };
-
-const gridToString = grid => grid.map(row => row.join("")).join("/");
-
-const stringToGrid = s => s.split("/").map(l => l.split(""));
-
-const logGrid = g => console.log(g.map(r => r.join("")).join("\n"));
 
 let grid = stringToGrid(".#./..#/###");
 const ITER = 18;
@@ -75,7 +77,8 @@ const ITER = 18;
 for (let i = 0; i < ITER; i++) {
   const size = grid.length;
   const subgridSize = size % 2 ? 3 : 2;
-  const ss = gridToSubgrids(grid, subgridSize).map(rr => rr.map(mapSubgrid));
+  let ss = gridToSubgrids(grid, subgridSize);
+  ss = ss.map(rr => rr.map(mapSubgrid));
   grid = subgridsToGrid(ss);
 }
 
