@@ -1,8 +1,8 @@
 const { readLines, parseInt } = require("../lib");
 
-const parse = line => line.split(" ");
+const parse = line => line.split(" ").slice(1); // skip line mnumbers
 
-const instructions = readLines("./input").map(parse);
+const instructions = readLines("./input2.2").map(parse);
 
 const regs = { a: 1 };
 
@@ -27,9 +27,9 @@ while (i >= 0 && i < instructions.length) {
     case "mul":
       regs[_[1]] = get(_[1]) * get(_[2]);
       break;
-    case "jnz":
+    case "gotonz":
       if (get(_[1]) !== 0) {
-        i += get(_[2]);
+        i = get(_[2]);
         continue;
       }
       break;
