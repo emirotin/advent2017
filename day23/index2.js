@@ -1,8 +1,18 @@
 const { readLines, parseInt } = require("../lib");
 
-const parse = line => line.split(" ").slice(1); // skip line mnumbers
+const parse = line => line.split(" ");
 
-const instructions = readLines("./input2.2").map(parse);
+const labelToIndex = [];
+const indexToLabel = [];
+const instructions = readLines("./input2.3")
+  .map(parse)
+  .map(l => {
+    const i = indexToLabel.length;
+    const label = parseInt(l[0]);
+    labelToIndex[label] = i;
+    indexToLabel[i] = label;
+    return l.slice(1);
+  }, {});
 
 const regs = { a: 1 };
 
@@ -14,8 +24,10 @@ const get = reg => {
 };
 
 let i = 0;
+let label = 0;
 while (i >= 0 && i < instructions.length) {
-  console.log("> ", i);
+  console.log("> ", label);
+  label = null;
   const _ = instructions[i];
   switch (_[0]) {
     case "set":
@@ -29,12 +41,19 @@ while (i >= 0 && i < instructions.length) {
       break;
     case "gotonz":
       if (get(_[1]) !== 0) {
-        i = get(_[2]);
-        continue;
+        label = get(_[2]);
       }
       break;
+    case "exit":
+      i = instructions.length;
+      break;
   }
-  i += 1;
+  if (label == null) {
+    i += 1;
+    label = indexToLabel[i];
+  } else {
+    i = labelToIndex[label];
+  }
 }
 
 console.log(regs.h);
