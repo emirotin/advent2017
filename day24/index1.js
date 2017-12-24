@@ -3,7 +3,7 @@ const without = require("lodash/without");
 
 const parse = l => l.split("/").map(parseInt);
 
-const nodes = readLines("./input1")
+const nodes = readLines("./input")
   .map(parse)
   .map(([a, b]) => ({ a, b }));
 
@@ -17,14 +17,15 @@ const matchesTip = tip => node => node.a === tip || node.b === tip;
 
 const emptyBridge = { nodes: [], weight: 0, tip: 0 };
 
-const possibleBridges = (res, pairs) => {
-  if (!pairs.length) return res;
+let maxWeight = 0;
+let pairs = [{ bridge: emptyBridge, remainingNodes: nodes }];
 
+while (pairs.length) {
   const newPairs = [];
   pairs.forEach(({ bridge, remainingNodes }) => {
     const matchingNodes = remainingNodes.filter(matchesTip(bridge.tip));
     if (!matchingNodes.length) {
-      res.push(bridge);
+      maxWeight = Math.max(maxWeight, bridge.weight);
     }
     matchingNodes.forEach(node => {
       newPairs.push({
@@ -34,14 +35,7 @@ const possibleBridges = (res, pairs) => {
     });
   });
 
-  return possibleBridges(res, newPairs);
-};
+  pairs = newPairs;
+}
 
-console.log(
-  Math.max(
-    ...possibleBridges(
-      [],
-      [{ bridge: emptyBridge, remainingNodes: nodes }]
-    ).map(({ weight }) => weight)
-  )
-);
+console.log(Math.max(maxWeight));
