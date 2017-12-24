@@ -1,10 +1,9 @@
 const { readLines, parseInt } = require("../lib");
 const without = require("lodash/without");
-const find = require("lodash/find");
 
 const parse = l => l.split("/").map(parseInt);
 
-const nodes = readLines("./input")
+const nodes = readLines("./input1")
   .map(parse)
   .map(([a, b]) => ({ a, b }));
 
@@ -18,23 +17,31 @@ const matchesTip = tip => node => node.a === tip || node.b === tip;
 
 const emptyBridge = { nodes: [], weight: 0, tip: 0 };
 
-const possibleBridges = (bridge, remainingNodes) => {
-  const matchingNodes = remainingNodes.filter(matchesTip(bridge.tip));
-  if (!matchingNodes.length) return [bridge];
+const possibleBridges = (res, pairs) => {
+  if (!pairs.length) return res;
 
-  const res = [];
-  matchingNodes.forEach(node => {
-    res.push(
-      ...possibleBridges(
-        expandBridge(bridge, node),
-        without(remainingNodes, node)
-      )
-    );
+  const newPairs = [];
+  pairs.forEach(({ bridge, remainingNodes }) => {
+    const matchingNodes = remainingNodes.filter(matchesTip(bridge.tip));
+    if (!matchingNodes.length) {
+      res.push(bridge);
+    }
+    matchingNodes.forEach(node => {
+      newPairs.push({
+        bridge: expandBridge(bridge, node),
+        remainingNodes: without(remainingNodes, node)
+      });
+    });
   });
 
-  return res;
+  return possibleBridges(res, newPairs);
 };
 
 console.log(
-  Math.max(...possibleBridges(emptyBridge, nodes).map(({ weight }) => weight))
+  Math.max(
+    ...possibleBridges(
+      [],
+      [{ bridge: emptyBridge, remainingNodes: nodes }]
+    ).map(({ weight }) => weight)
+  )
 );
