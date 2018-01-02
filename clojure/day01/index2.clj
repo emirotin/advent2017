@@ -2,8 +2,15 @@
 
 (def parseInt #(Integer/parseInt %))
 
-(def input
-  (into [] (map parseInt (s/split (s/trim (slurp "./input")) #""))))
+(defn split [p s] (s/split s p))
+
+(def input (->> "./input"
+  slurp
+  s/trim
+  (split #"")
+  (map parseInt)
+  (into [])
+))
 
 (def l (count input))
 
