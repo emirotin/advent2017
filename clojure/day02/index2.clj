@@ -19,9 +19,10 @@
 
 (defn sum [a] (reduce + 0 a))
 
-(defn find-div [r] (let [
-  r' (->> r sort (into []))
-  l (count r)
+(defn find-div [r]
+  (let [
+    r' (->> r sort (into []))
+    l (count r)
   ] 
   (loop [i 0 j 1] (
       let [

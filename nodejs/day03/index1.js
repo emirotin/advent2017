@@ -19,5 +19,3 @@ const dist = n => {
 };
 
 console.log(dist(N));
-
-// 1 8 16 24
