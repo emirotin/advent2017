@@ -19,7 +19,7 @@
            (if (== i l)
               sum
               (recur 
-                (+ sum (if-not (== (get input' i) (get input' (+ 1 i))) 0 (get input' i)))
-                (+ i 1)))))
+                (+ sum (if-not (== (get input' i) (get input' (inc i))) 0 (get input' i)))
+                (inc i)))))
 
 (println res)

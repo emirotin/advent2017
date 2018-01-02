@@ -21,6 +21,6 @@
               sum
               (recur 
                 (+ sum (if-not (== (get input i) (get input (nxt i))) 0 (get input i)))
-                (+ i 1)))))
+                (inc i)))))
 
 (println res)
