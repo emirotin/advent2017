@@ -4,16 +4,14 @@ const data = readLines("./input")[0]
   .split("\t")
   .map(parseInt);
 
-const l = data.length;
-
-const key = () => data.join("-");
-
 const getMaxIndex = () => {
   const max = Math.max(...data);
   return Math.min(
     ...data.map((el, i) => (el === max ? i : null)).filter(el => el != null)
   );
 };
+
+const l = data.length;
 
 const next = i => (i + 1) % l;
 
@@ -27,6 +25,8 @@ const redistribute = () => {
     data[i]++;
   }
 };
+
+const key = () => data.join("-");
 
 const count = () => {
   const hash = {};
@@ -43,4 +43,5 @@ const count = () => {
     hash[k] = iter;
   }
 };
+
 console.log(count());
