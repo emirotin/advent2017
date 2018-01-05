@@ -8,7 +8,7 @@
 
 (def SUFFIX [17 31 73 47 23])
 
-(defn add-suffix [a] (into [] (concat a SUFFIX)))
+(defn add-suffix [a] (cnct a SUFFIX))
 
 (def chr #(get % 0))
 
@@ -21,9 +21,11 @@
   add-suffix
   (into [])))
 
+(defn vec-range [& args] (into [] (apply range args)))
+
 (def L 256)
 
-(def a (into [] (range L)))
+(def a (vec-range L))
 
 (defn read-slice [a l i] (let [
   L (count a)
@@ -92,7 +94,7 @@
 
 (defn xor [a] (reduce bit-xor 0 a))
 
-(def dense-hash (map #(xor (subvec sparse-hash (* % 16) (* (inc %) 16))) (into [] (range 16))))
+(def dense-hash (map #(xor (subvec sparse-hash (* % 16) (* (inc %) 16))) (vec-range 16)))
 
 (def to-hex #(format "%02x" %))
 
