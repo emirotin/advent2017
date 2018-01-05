@@ -2,8 +2,6 @@ const { readFile } = require("../lib");
 
 const input = readFile("./input");
 
-// const input = "<random characters>";
-
 let total = 0;
 
 let i = 0;
@@ -22,7 +20,6 @@ while (i < l) {
       i++;
       break;
     case ">":
-      start = i + 1;
       inGarbage = false;
       break;
     default:
