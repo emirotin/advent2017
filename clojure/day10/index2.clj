@@ -92,7 +92,7 @@
 
 (defn xor [a] (reduce bit-xor 0 a))
 
-(def dense-hash (map (fn [i] (xor (subvec sparse-hash (* i 16) (* (inc i) 16)))) (into [] (range 16))))
+(def dense-hash (map #(xor (subvec sparse-hash (* % 16) (* (inc %) 16))) (into [] (range 16))))
 
 (def to-hex #(format "%02x" %))
 
