@@ -55,18 +55,28 @@ const run = () => {
   }
 };
 
-let period = 0;
-let orig = arr.join("");
+let setup,
+  period,
+  i = 0;
+let seen = {
+  [arr.join("")]: 0
+};
+
 while (true) {
-  period++;
   run();
-  if (arr.join("") === orig) {
+  i++;
+  const state = arr.join("");
+  if (seen[state]) {
+    setup = seen[state];
+    period = i - setup;
     break;
+  } else {
+    seen[state] = i;
   }
 }
 
 const ITER = 1e9;
-const iter = ITER % period;
+const iter = (ITER - setup) % period;
 for (let i = 0; i < iter; i++) {
   run();
 }
