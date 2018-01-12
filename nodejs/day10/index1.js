@@ -1,7 +1,7 @@
 const { readFile, parseInt } = require("../lib");
 
-const a = Array.from({ length: 256 }, (_, i) => i);
-const L = a.length;
+const L = 256;
+const a = Array.from({ length: L }, (_, i) => i);
 
 const ls = readFile("./input")
   .split(",")
